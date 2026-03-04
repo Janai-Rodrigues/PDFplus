@@ -17,8 +17,10 @@
             /* Paleta moderna e suave */
             --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             --surface-color: #ffffff;
-            --primary-color: #6366f1;
-            --primary-hover: #4f46e5;
+            --primary-color: #f83333;
+            /* Vermelho PDF (antes era #6366f1) */
+            --primary-hover: #e02222;
+            /* Vermelho PDF Escuro (antes era #4f46e5) */
             --danger-color: #e53e3e;
             --danger-hover: #c53030;
             --text-main: #1f2937;
@@ -41,6 +43,11 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+        }
+
+        /* Classe para travar o scroll durante o loading */
+        .no-scroll {
+            overflow: hidden !important;
         }
 
         /* Barra Superior Fixa (Navbar) */
@@ -94,20 +101,18 @@
             text-decoration: none;
             padding: 10px 18px;
             border-radius: 8px;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             transition: var(--transition);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .nav-link:hover {
-            background-color: #f1f5f9;
-            color: var(--primary-color);
+            color: var(--danger-color);
         }
 
         .nav-link.active {
-            color: var(--primary-color);
-            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--danger-color);
         }
 
         main {
@@ -322,7 +327,6 @@
             align-items: center;
             padding: 12px;
             cursor: move;
-            /* Cursor modificado para cruz de arrastar conforme solicitado */
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
@@ -383,7 +387,6 @@
             border-radius: 6px;
             font-size: 0.8rem;
             white-space: pre-line;
-            /* Permite quebra de linha no tooltip */
             text-align: center;
             z-index: 100;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -690,22 +693,13 @@
             animation: spin 1s linear infinite;
         }
 
-        /* Efeito Borda Formiguinha Vermelha (Marching Ants) */
-        /* Efeito Borda Formiguinha Vermelha com SVG (Contorna cantos perfeitamente) */
+        /* Efeito Borda Formiguinha Vermelha com SVG */
         .borda-formiguinha {
             opacity: 0.8;
             background-color: rgba(229, 62, 62, 0.05) !important;
             border: none !important;
             border-radius: 12px;
-
-            /* Desenha um retângulo SVG com borda tracejada, cantos arredondados (rx/ry) e animação nativa */
             background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23e53e3e' stroke-width='4' stroke-dasharray='12' stroke-dashoffset='0'%3E%3Canimate attributeName='stroke-dashoffset' values='24;0' dur='0.6s' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
-        }
-
-        @keyframes marcha-formiga {
-            100% {
-                background-position: 16px 0%, calc(100% - 16px) 100%, 0% calc(100% - 16px), 100% 16px;
-            }
         }
 
         @keyframes fadeIn {
@@ -756,6 +750,121 @@
 
             100% {
                 transform: rotate(360deg);
+            }
+        }
+
+        /* Animação Upload (Visual Clean e Flat - Sem Traços Feios) */
+        .upload-animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 250px;
+            /* Aumente este valor (o original era 120px) */
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .anim-source {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            z-index: 1;
+            /* Garante que a pasta fique abaixo da nuvem globalmente */
+        }
+
+        .folder-back,
+        .folder-front {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .folder-back {
+            z-index: 1;
+        }
+
+        .anim-file {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            top: 20px;
+            left: 22px;
+            z-index: 2;
+            /* Fica ensanduichado: acima do fundo da pasta, mas atrás da frente */
+            animation: flyToDest 2.2s ease-in-out infinite;
+        }
+
+        .anim-file svg {
+            /* Sombra muito suave apenas para separar levemente o documento */
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+        }
+
+        .folder-front {
+            z-index: 3;
+            /* Cobre o PDF para ele nascer de dentro */
+        }
+
+        .anim-dest {
+            width: 130px;
+            height: 130px;
+            position: relative;
+            z-index: 4;
+            /* A nuvem fica na frente de tudo. O PDF (z-index 2) entrará por trás dela */
+            filter: drop-shadow(0 8px 16px rgba(14, 165, 233, 0.25));
+            animation: floatCloud 3s ease-in-out infinite;
+        }
+
+        /* Trajeto perfeitamente alinhado com o gap de 250px */
+        @keyframes flyToDest {
+            0% {
+                transform: translate(0, 15px) scale(0.5) rotate(0deg);
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            15% {
+                transform: translate(0, -15px) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            45% {
+                /* Metade do caminho: adicionei 65px no eixo X (era 117px original) */
+                transform: translate(182px, -110px) scale(1.1) rotate(15deg);
+                opacity: 1;
+            }
+
+            75% {
+                /* Ponto de chegada: adicionei 130px no eixo X (era 235px original) */
+                transform: translate(365px, 0px) scale(0.6) rotate(5deg);
+                opacity: 1;
+            }
+
+            90% {
+                /* Afunda escondido pela nuvem: adicionei 130px (era 235px original) */
+                transform: translate(365px, 20px) scale(0.3) rotate(0deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(365px, 20px) scale(0.3) rotate(0deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes floatCloud {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
             }
         }
     </style>
@@ -870,7 +979,39 @@
     </div>
 
     <div id="loading-overlay">
-        <div class="spinner"></div>
+        <div class="upload-animation-container">
+            <div class="anim-source">
+                <svg class="folder-back" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#FDE047" d="M8 18h16l6 8h26v28H8Z" />
+                </svg>
+
+                <div class="anim-file" id="anim-file-el">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#FFFFFF" d="M14 8h24l12 12v36H14Z" />
+                        <path fill="#e2e8f0" d="M38 8v12h12" />
+                        <rect x="24" y="28" width="16" height="2" rx="1" fill="#cbd5e1" />
+                        <rect x="24" y="34" width="16" height="2" rx="1" fill="#cbd5e1" />
+                        <rect x="24" y="40" width="10" height="2" rx="1" fill="#cbd5e1" />
+                        <rect x="18" y="24" width="14" height="14" rx="3" fill="#EF4444" />
+                        <text x="20" y="34" font-family="Arial, sans-serif" font-size="7" font-weight="bold"
+                            fill="#FFFFFF">PDF</text>
+                    </svg>
+                </div>
+
+                <svg class="folder-front" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#FACC15" d="M8 26h48v28H8Z" />
+                </svg>
+            </div>
+
+            <div class="anim-dest">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#7DD3FC"
+                        d="M48 44c6.6 0 12-5.4 12-12s-5.4-12-12-12c-1.1 0-2.2.1-3.2.4C44 14.1 38 10 31 10c-8.8 0-16 7.2-16 16 0 .6 0 1.2.1 1.8-5.3 1.1-9.1 5.7-9.1 11.2 0 6.6 5.4 12 12 12h30z" />
+                    <path fill="#0EA5E9"
+                        d="M48 44H18c-5.5 0-10-4.5-10-10s4.5-10 10-10c.8 0 1.5.1 2.2.3C21.7 18.2 25.9 14 31 14c5.7 0 10.5 4.3 11.7 9.8 1.6-.5 3.4-.8 5.3-.8 6.6 0 12 5.4 12 12s-5.4 12-12 12z" />
+                </svg>
+            </div>
+        </div>
         <h3 id="loading-text" style="margin-top: 25px; color: #1e293b; font-weight: 600;">Processando...</h3>
     </div>
 
@@ -892,6 +1033,8 @@
         const btnProcess = document.getElementById('btn-process');
         const actionBar = document.getElementById('action-bar');
         const statusText = document.getElementById('status-text');
+
+        // Elementos do Overlay de Loading
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 
@@ -901,6 +1044,57 @@
 
         const dzTitle = document.getElementById('dz-title');
         const dzSubtitle = document.getElementById('dz-subtitle');
+
+        // --- SISTEMA ROBUSTO DE LOADING E ANIMAÇÃO ---
+        let isLoadingActive = false;
+        let hideLoadingRequested = false;
+        let loadingResolve = null;
+
+        function showLoading(text) {
+            isLoadingActive = true;
+            hideLoadingRequested = false;
+            loadingText.innerText = text;
+            loadingOverlay.style.display = 'flex';
+            document.body.classList.add('no-scroll'); // Remove a barra de rolagem
+        }
+
+        // Retorna uma Promise que só resolve quando a animação finalizar o ciclo
+        function hideLoading() {
+            return new Promise((resolve) => {
+                if (!isLoadingActive) {
+                    resolve();
+                    return;
+                }
+                hideLoadingRequested = true;
+                loadingResolve = resolve;
+
+                // Failsafe: se a animação travar, ele finaliza por segurança após 2.5s
+                setTimeout(() => {
+                    if (isLoadingActive && hideLoadingRequested) {
+                        finishHideLoading();
+                    }
+                }, 2500);
+            });
+        }
+
+        function finishHideLoading() {
+            isLoadingActive = false;
+            hideLoadingRequested = false;
+            loadingOverlay.style.display = 'none';
+            document.body.classList.remove('no-scroll'); // Devolve a barra de rolagem
+            if (loadingResolve) {
+                loadingResolve();
+                loadingResolve = null;
+            }
+        }
+
+        // Ouve o momento exato em que o ciclo da animação termina para fechá-la perfeitamente
+        document.getElementById('anim-file-el').addEventListener('animationiteration', () => {
+            if (hideLoadingRequested) {
+                finishHideLoading();
+            }
+        });
+        // ---------------------------------------------
 
         // Função utilitária para formatar bytes
         function formatBytes(bytes, decimals = 2) {
@@ -939,7 +1133,6 @@
         }
 
         function openTool(tool) {
-            // Se já tiver arquivos carregados e mudar de ferramenta, limpar o estado
             if (currentTool !== tool) {
                 selectedFiles = [];
             }
@@ -971,7 +1164,7 @@
             if (!sortableInstance) {
                 sortableInstance = new Sortable(thumbnailGrid, {
                     animation: 250,
-                    ghostClass: 'borda-formiguinha', // <--- Nossa nova classe animada e vermelha
+                    ghostClass: 'borda-formiguinha',
                     filter: '.add-more-btn',
                     onMove: function (evt) {
                         return evt.related.className.indexOf('add-more-btn') === -1;
@@ -1021,38 +1214,34 @@
                 if (selectedFiles.length > 0 || newFiles.length > 1) {
                     showToast('A divisão processa apenas um arquivo base por vez.', 'info');
                 }
-                loadingOverlay.style.display = 'flex';
-                loadingText.innerText = "Extraindo e renderizando todas as páginas...";
+                showLoading("Extraindo e renderizando todas as páginas...");
                 await processSplitFile(newFiles[0]);
-                loadingOverlay.style.display = 'none';
+                await hideLoading();
             } else {
-                loadingOverlay.style.display = 'flex';
-                loadingText.innerText = "Gerando visualizações em alta qualidade...";
+                showLoading("Importando documentos...");
                 for (let file of newFiles) {
                     await addFileObj(file, false);
                 }
-                loadingOverlay.style.display = 'none';
+                await hideLoading();
             }
             fileInput.value = '';
         }
 
-        // Função Especial para a Ferramenta de Divisão
         async function processSplitFile(file) {
             try {
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const numPages = pdf.numPages;
-                selectedFiles = []; // Reseta para exibir apenas o arquivo atual
+                selectedFiles = [];
 
-                // Tamanho aproximado por página para exibir no tooltip
                 const approxSizePerPage = file.size / numPages;
 
                 for (let i = 1; i <= numPages; i++) {
                     const thumbData = await generateThumbnail(file, i, pdf);
                     selectedFiles.push({
                         id: Math.random().toString(36).substr(2, 9),
-                        file: file, // mantemos o arquivo original como referência
-                        pageNum: i, // registra qual página é
+                        file: file,
+                        pageNum: i,
                         thumbnail: thumbData,
                         rotation: 0,
                         size: approxSizePerPage,
@@ -1087,7 +1276,6 @@
             }
         }
 
-        // Thumbnail atualizado para aceitar número da página e documento em cache
         async function generateThumbnail(file, pageNum = 1, cachedPdfDoc = null) {
             let pdf = cachedPdfDoc;
             if (!pdf) {
@@ -1138,7 +1326,6 @@
                     card.className = 'thumb-card';
                     card.dataset.id = obj.id;
 
-                    // Formatação do nome e tooltip
                     const sizeStr = formatBytes(obj.size);
                     const displayName = obj.isSplitPage ? `Página ${obj.pageNum}` : obj.file.name;
                     const tooltipText = obj.isSplitPage
@@ -1162,8 +1349,6 @@
                     thumbnailGrid.appendChild(card);
                 });
 
-                // Ocultar o botão de "Adicionar Mais" caso estejamos na tela de Divisão, 
-                // pois ela foca no desmembramento do arquivo atual.
                 if (currentTool !== 'split') {
                     const addBtn = document.createElement('div');
                     addBtn.className = 'add-more-btn';
@@ -1249,8 +1434,7 @@
 
         async function confirmExport() {
             closeExportModal();
-            loadingOverlay.style.display = 'flex';
-            loadingText.innerText = "Trabalhando na sua exportação livre...";
+            showLoading("Trabalhando na sua exportação livre...");
 
             try {
                 const mode = freeMergeSelect.value;
@@ -1264,13 +1448,12 @@
                 console.error(error);
                 showToast('Erro durante a exportação livre.', 'error');
             } finally {
-                loadingOverlay.style.display = 'none';
+                await hideLoading();
             }
         }
 
         async function processFiles() {
-            loadingOverlay.style.display = 'flex';
-            loadingText.innerText = "Criando seu novo documento...";
+            showLoading("Criando seu novo documento...");
             try {
                 if (currentTool === 'merge') await executeMerge();
                 else if (currentTool === 'split') await executeSplit();
@@ -1278,7 +1461,7 @@
                 console.error(error);
                 showToast('Ocorreu um erro ao processar os documentos.', 'error');
             } finally {
-                loadingOverlay.style.display = 'none';
+                await hideLoading();
             }
         }
 
@@ -1343,7 +1526,6 @@
             goHome();
         }
 
-        // Dividir PDF Adaptado para salvar exatamente as páginas presentes na tela (após exclusão/ordenação)
         async function executeSplit() {
             const { PDFDocument, degrees } = window.PDFLib;
             const zip = new JSZip();
@@ -1362,7 +1544,6 @@
                 const obj = selectedFiles[i];
                 const newPdf = await PDFDocument.create();
 
-                // PDFLib usa índices baseados em zero, enquanto nossa pageNum começa em 1
                 const [copiedPage] = await newPdf.copyPages(originalPdf, [obj.pageNum - 1]);
 
                 if (obj.rotation !== 0) {
@@ -1373,7 +1554,6 @@
                 newPdf.addPage(copiedPage);
                 const pdfBytes = await newPdf.save();
 
-                // Salva mantendo a referência correta do número original da página
                 zip.file(`${originalName}_Pagina_${obj.pageNum}.pdf`, pdfBytes);
             }
 
