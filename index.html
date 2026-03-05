@@ -18,9 +18,9 @@
             --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             --surface-color: #ffffff;
             --primary-color: #f83333;
-            /* Vermelho PDF (antes era #6366f1) */
+            /* Vermelho PDF */
             --primary-hover: #e02222;
-            /* Vermelho PDF Escuro (antes era #4f46e5) */
+            /* Vermelho PDF Escuro */
             --danger-color: #e53e3e;
             --danger-hover: #c53030;
             --text-main: #1f2937;
@@ -36,13 +36,38 @@
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
+        /* Estilo Global das Barras de Rolagem (Grossinhas e Modernas) */
+        ::-webkit-scrollbar {
+            width: 14px;
+            height: 14px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 8px;
+            border: 3px solid #e2e8f0;
+            /* Cria um espaço de respiro visual */
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+            border-color: #e2e8f0;
+        }
+
         body {
             background: var(--bg-gradient);
             color: var(--text-main);
-            min-height: 100vh;
+            height: 100vh;
+            /* Altura fixa para travar a tela externa */
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            overflow: hidden;
+            /* Fim dos conflitos de scroll da página toda */
         }
 
         /* Classe para travar o scroll durante o loading */
@@ -61,6 +86,7 @@
             gap: 40px;
             z-index: 1000;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
         }
 
         .logo-container {
@@ -108,19 +134,23 @@
         }
 
         .nav-link:hover {
-            color: var(--danger-color);
+            color: var(--primary-color);
+            background: rgba(248, 51, 51, 0.05);
         }
 
         .nav-link.active {
-            color: var(--danger-color);
+            color: var(--primary-color);
         }
 
         main {
             flex: 1;
-            padding: 20px 40px 100px 40px;
+            padding: 0 40px 0 40px;
+            /* Sem padding inferior, permitindo ocupação total */
             width: 100%;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            /* Mantém toda a rolagem estritamente interna */
         }
 
         /* Grid de Ferramentas Inicial */
@@ -131,9 +161,12 @@
             max-width: 1200px;
             margin: 40px auto 0 auto;
             width: 100%;
+            overflow-y: auto;
+            padding-bottom: 40px;
+            align-content: start;
         }
 
-        /* Sem efeito de pular, apenas borda e brilho no SVG */
+        /* Cards Ferramentas - Sem hover vermelho fixo, usaremos as cores nativas */
         .tool-card {
             background: var(--surface-color);
             border-radius: var(--border-radius);
@@ -150,8 +183,44 @@
         }
 
         .tool-card:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Efeitos de Hover Dinâmicos (Sem Pular) */
+        .tool-card.card-merge:hover {
+            border-color: #4f46e5;
+        }
+
+        .tool-card.card-merge:hover svg {
+            color: #4f46e5;
+        }
+
+        .tool-card.card-merge:hover .icon-wrapper {
+            background: rgba(79, 70, 229, 0.15);
+        }
+
+        .tool-card.card-split:hover {
+            border-color: #ef4444;
+        }
+
+        .tool-card.card-split:hover svg {
+            color: #ef4444;
+        }
+
+        .tool-card.card-split:hover .icon-wrapper {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .tool-card.card-free:hover {
+            border-color: #10b981;
+        }
+
+        .tool-card.card-free:hover svg {
+            color: #10b981;
+        }
+
+        .tool-card.card-free:hover .icon-wrapper {
+            background: rgba(16, 185, 129, 0.15);
         }
 
         .icon-wrapper {
@@ -166,11 +235,7 @@
         }
 
         .tool-card svg {
-            transition: filter 0.3s ease;
-        }
-
-        .tool-card:hover svg {
-            filter: drop-shadow(0 0 10px currentColor);
+            transition: filter 0.3s ease, color 0.3s ease;
         }
 
         .bg-merge {
@@ -188,10 +253,6 @@
             color: #10b981;
         }
 
-        .tool-card:hover .bg-free svg {
-            filter: drop-shadow(0 0 10px currentColor);
-        }
-
         .tool-card h2 {
             font-size: 1.4rem;
             font-weight: 600;
@@ -203,25 +264,37 @@
             line-height: 1.5;
         }
 
-        /* Workspace Ocupando Tela Toda */
+        /* Workspace Ocupando 100% da altura flexível do MAIN */
         #workspace {
+            position: relative;
             display: none;
+            flex-direction: column;
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
             animation: fadeIn 0.4s ease;
+            flex: 1;
+            overflow: hidden;
         }
 
         .workspace-header {
+            position: absolute;
+            /* <- ADICIONE */
+            top: 20px;
+            /* <- ADICIONE */
+            left: 0;
+            /* <- ADICIONE */
+            z-index: 10;
             display: flex;
             align-items: center;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            flex-shrink: 0;
         }
 
         .btn-back {
             background: rgba(255, 255, 255, 0.5);
-            border: 1px solid #cbd5e1;
+            border: 2px solid #cbd5e1;
             cursor: pointer;
             color: var(--text-main);
             padding: 10px;
@@ -235,19 +308,19 @@
         .btn-back:hover {
             background: var(--surface-color);
             border-color: var(--primary-color);
+            color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(248, 51, 51, 0.15);
         }
 
-        .btn-back:hover svg {
-            filter: drop-shadow(0 0 5px currentColor);
-        }
 
-        /* Zona de Drop */
+        /* Zona de Drop Centralizada e Flexível */
         .drop-zone {
+            margin-top: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 60vh;
+            flex: 1;
             text-align: center;
             padding: 40px;
             border: 2px dashed transparent;
@@ -257,7 +330,7 @@
 
         .drop-zone.dragover {
             border-color: var(--primary-color);
-            background: rgba(224, 231, 255, 0.4);
+            background: rgba(248, 51, 51, 0.05);
         }
 
         .dz-title {
@@ -276,7 +349,7 @@
         }
 
         .btn-select {
-            background-color: var(--danger-color);
+            background-color: var(--primary-color);
             color: white;
             border: none;
             padding: 20px 45px;
@@ -284,14 +357,15 @@
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+            transition: box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 4px 15px rgba(248, 51, 51, 0.3);
             margin-bottom: 20px;
         }
 
+        /* Sem efeito de salto, apenas brilho da cor e sombra */
         .btn-select:hover {
-            background-color: var(--danger-hover);
-            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.5);
+            background-color: var(--primary-hover);
+            box-shadow: 0 6px 20px rgba(248, 51, 51, 0.6);
         }
 
         .dz-drag-text {
@@ -299,10 +373,15 @@
             font-size: 1rem;
         }
 
-        /* Container dos Previews */
+        /* Container de Previews - Agora ocupa o espaço TODO, ativando drag and scroll suave perfeito */
         #preview-container {
             display: none;
             width: 100%;
+            flex: 1;
+            /* Estica de cima abaixo na tela */
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 90px 10px 120px 10px;
         }
 
         #thumbnail-grid {
@@ -310,7 +389,6 @@
             flex-wrap: wrap;
             gap: 25px;
             justify-content: center;
-            padding-bottom: 20px;
         }
 
         /* Previews Maiores */
@@ -330,13 +408,15 @@
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
+        /* Sem saltar */
         .thumb-card:hover {
             border-color: var(--primary-color);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(248, 51, 51, 0.15);
         }
 
         .thumb-card:active {
             cursor: move;
+            /* Scale removido para anular completamente saltos e saltinhos */
         }
 
         .thumb-image-container {
@@ -361,7 +441,6 @@
             border-radius: 4px;
         }
 
-        /* Sistema de Tooltip Moderno com Informações Extras */
         .thumb-filename {
             position: relative;
             font-size: 0.85rem;
@@ -373,40 +452,6 @@
             text-overflow: ellipsis;
             margin-bottom: 10px;
             cursor: default;
-        }
-
-        .thumb-filename:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1e293b;
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            white-space: pre-line;
-            text-align: center;
-            z-index: 100;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            pointer-events: none;
-            animation: fadeIn 0.2s ease;
-            min-width: max-content;
-            line-height: 1.4;
-        }
-
-        .thumb-filename:hover::before {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 5px;
-            border-style: solid;
-            border-color: #1e293b transparent transparent transparent;
-            z-index: 100;
-            pointer-events: none;
         }
 
         .thumb-actions {
@@ -433,16 +478,9 @@
         .action-btn:hover {
             border-color: var(--primary-color);
             color: var(--primary-color);
+            background: rgba(248, 51, 51, 0.05);
         }
 
-        .action-btn:hover svg {
-            filter: drop-shadow(0 0 5px currentColor);
-        }
-
-        .action-btn.delete:hover {
-            border-color: var(--danger-color);
-            color: var(--danger-color);
-        }
 
         .add-more-btn {
             width: 200px;
@@ -461,15 +499,14 @@
             gap: 15px;
         }
 
+        /* Sem saltar */
         .add-more-btn:hover {
             border-color: var(--primary-color);
             color: var(--primary-color);
-            background: rgba(224, 231, 255, 0.3);
+            background: rgba(248, 51, 51, 0.05);
+            box-shadow: 0 8px 25px rgba(248, 51, 51, 0.1);
         }
 
-        .add-more-btn:hover svg {
-            filter: drop-shadow(0 0 5px currentColor);
-        }
 
         .sortable-ghost {
             opacity: 0.3;
@@ -499,25 +536,92 @@
             color: #475569;
         }
 
-        .select-modern {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            background: #f8fafc;
-            color: #1e293b;
-            font-size: 1rem;
-            outline: none;
-            cursor: pointer;
-            transition: var(--transition);
+        /* -------------------------------------
+           ESTILO DO NOVO DROPDOWN CUSTOMIZADO 
+           ------------------------------------- */
+        .custom-select-container {
+            position: relative;
+            min-width: 260px;
+            user-select: none;
         }
 
-        .select-modern:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        .custom-select-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            /* Borda leve igual ao print */
+            cursor: pointer;
+            font-size: 1rem;
+            color: #1e293b;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
+
+        /* Simula o foco/borda vermelha da imagem */
+        .custom-select-container.open .custom-select-trigger {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+
+        .custom-select-trigger svg {
+            transition: transform 0.3s ease;
+            color: var(--primary-color);
+            /* Seta na cor original */
+        }
+
+        .custom-select-container.open .custom-select-trigger svg {
+            transform: rotate(180deg);
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            bottom: calc(100% + 5px);
+            /* Abre para cima por estar na barra de baixo */
+            left: 0;
+            width: 100%;
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .custom-select-container.open .custom-select-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .cs-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+
+        .cs-option:hover {
+            background: #f1f5f9;
+        }
+
+        /* Exatamente igual ao Print (Azul Windows Native) */
+        .cs-option.active {
+            background: #1976d2;
+            color: #fff;
+        }
+
+        /* ------------------------------------- */
 
         .btn-primary {
-            background: var(--danger-color);
+            background: var(--primary-color);
             color: white;
             border: none;
             padding: 12px 35px;
@@ -525,15 +629,16 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: box-shadow 0.3s, background-color 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 10px;
         }
 
+        /* Sem saltar */
         .btn-primary:hover {
-            background: var(--danger-hover);
-            box-shadow: 0 0 15px rgba(229, 62, 62, 0.4);
+            background: var(--primary-hover);
+            box-shadow: 0 0 15px rgba(248, 51, 51, 0.4);
         }
 
         .btn-primary:disabled {
@@ -558,6 +663,7 @@
             animation: fadeIn 0.2s ease;
         }
 
+        /* Modal agora flexível para rolagem interna perfeita */
         .modal-content {
             background: var(--surface-color);
             border-radius: var(--border-radius);
@@ -566,7 +672,9 @@
             padding: 30px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
             max-height: 85vh;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .modal-header {
@@ -576,6 +684,14 @@
             margin-bottom: 20px;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        /* O Corpo do Modal agora recebe todo o scroll com a nova barra de rolagem */
+        #modal-body {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 10px;
         }
 
         .input-group {
@@ -604,9 +720,10 @@
             outline: none;
             border-color: var(--primary-color);
             background: #fff;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(248, 51, 51, 0.15);
         }
 
+        /* Botões Fixos Embaixo no Modal */
         .modal-actions {
             display: flex;
             justify-content: flex-end;
@@ -614,6 +731,7 @@
             margin-top: 25px;
             padding-top: 15px;
             border-top: 1px solid #e2e8f0;
+            flex-shrink: 0;
         }
 
         .btn-secondary {
@@ -628,8 +746,9 @@
         }
 
         .btn-secondary:hover {
-            background: #f1f5f9;
-            color: #1e293b;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: rgba(248, 51, 51, 0.05);
         }
 
         .modal-actions .btn-primary {
@@ -684,22 +803,12 @@
             z-index: 3000;
         }
 
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid #e2e8f0;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        /* Efeito Borda Formiguinha Vermelha com SVG */
         .borda-formiguinha {
             opacity: 0.8;
-            background-color: rgba(229, 62, 62, 0.05) !important;
+            background-color: rgba(248, 51, 51, 0.05) !important;
             border: none !important;
             border-radius: 12px;
-            background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23e53e3e' stroke-width='4' stroke-dasharray='12' stroke-dashoffset='0'%3E%3Canimate attributeName='stroke-dashoffset' values='24;0' dur='0.6s' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23f83333' stroke-width='4' stroke-dasharray='12' stroke-dashoffset='0'%3E%3Canimate attributeName='stroke-dashoffset' values='24;0' dur='0.6s' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E");
         }
 
         @keyframes fadeIn {
@@ -743,128 +852,106 @@
             }
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Animação Upload (Visual Clean e Flat - Sem Traços Feios) */
-        .upload-animation-container {
-            display: flex;
-            justify-content: center;
+        /* Animação Scanner (Upload) */
+        .anim-upload-container {
+            display: none;
+            flex-direction: column;
             align-items: center;
-            gap: 250px;
-            /* Aumente este valor (o original era 120px) */
-            margin-bottom: 20px;
-            position: relative;
+            justify-content: center;
+            margin-bottom: 25px;
         }
 
-        .anim-source {
+        .scanner-doc {
             position: relative;
-            width: 100px;
-            height: 100px;
-            z-index: 1;
-            /* Garante que a pasta fique abaixo da nuvem globalmente */
+            width: 70px;
+            height: 90px;
+            background: #fff;
+            border: 3px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .folder-back,
-        .folder-front {
+        .scanner-doc::before {
+            content: 'PDF';
+            font-weight: 800;
+            font-size: 18px;
+            color: #cbd5e1;
+        }
+
+        .scanner-line {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 3px;
+            background: var(--primary-color);
+            box-shadow: 0 0 12px var(--primary-color), 0 0 4px var(--primary-color);
+            animation: scan 1.5s ease-in-out infinite;
         }
 
-        .folder-back {
-            z-index: 1;
-        }
-
-        .anim-file {
-            position: absolute;
-            width: 55px;
-            height: 55px;
-            top: 20px;
-            left: 22px;
-            z-index: 2;
-            /* Fica ensanduichado: acima do fundo da pasta, mas atrás da frente */
-            animation: flyToDest 2.2s ease-in-out infinite;
-        }
-
-        .anim-file svg {
-            /* Sombra muito suave apenas para separar levemente o documento */
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
-        }
-
-        .folder-front {
-            z-index: 3;
-            /* Cobre o PDF para ele nascer de dentro */
-        }
-
-        .anim-dest {
-            width: 130px;
-            height: 130px;
-            position: relative;
-            z-index: 4;
-            /* A nuvem fica na frente de tudo. O PDF (z-index 2) entrará por trás dela */
-            filter: drop-shadow(0 8px 16px rgba(14, 165, 233, 0.25));
-            animation: floatCloud 3s ease-in-out infinite;
-        }
-
-        /* Trajeto perfeitamente alinhado com o gap de 250px */
-        @keyframes flyToDest {
+        @keyframes scan {
             0% {
-                transform: translate(0, 15px) scale(0.5) rotate(0deg);
+                top: -5px;
                 opacity: 0;
             }
 
-            5% {
-                opacity: 1;
-            }
-
-            15% {
-                transform: translate(0, -15px) scale(1) rotate(0deg);
-                opacity: 1;
-            }
-
-            45% {
-                /* Metade do caminho: adicionei 65px no eixo X (era 117px original) */
-                transform: translate(182px, -110px) scale(1.1) rotate(15deg);
-                opacity: 1;
-            }
-
-            75% {
-                /* Ponto de chegada: adicionei 130px no eixo X (era 235px original) */
-                transform: translate(365px, 0px) scale(0.6) rotate(5deg);
+            10% {
                 opacity: 1;
             }
 
             90% {
-                /* Afunda escondido pela nuvem: adicionei 130px (era 235px original) */
-                transform: translate(365px, 20px) scale(0.3) rotate(0deg);
-                opacity: 0;
+                opacity: 1;
             }
 
             100% {
-                transform: translate(365px, 20px) scale(0.3) rotate(0deg);
+                top: 90px;
                 opacity: 0;
             }
         }
 
-        @keyframes floatCloud {
+        /* Animação Pulso (Processamento) */
+        .anim-process-container {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            height: 90px;
+        }
+
+        .process-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .process-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .process-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
 
             0%,
+            80%,
             100% {
-                transform: translateY(0);
+                transform: scale(0);
+                opacity: 0.5;
             }
 
-            50% {
-                transform: translateY(-10px);
+            40% {
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 15px rgba(248, 51, 51, 0.6);
             }
         }
     </style>
@@ -875,7 +962,7 @@
     <header>
         <div class="logo-container" onclick="goHome()">
             <img src="img/pdf.png" alt="Logo"
-                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTUzZTNlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xNCAySDZhMiAyIDAgMCAwLTIgMnYxNmEyIDIgMCAwIDAgMiAyaDEyYTIgMiAwIDAgMCAyLTJWOHoiPjwvcGF0aD48cG9seWxpbmUgcG9pbnRzPSIxNCAyIDE0IDggMjAgOCI+PC9wb2x5bGluZT48L3N2Zz4='">
+                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjgzMzMzIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xNCAySDZhMiAyIDAgMCAwLTIgMnYxNmEyIDIgMCAwIDAgMiAyaDEyYTIgMiAwIDAgMCAyLTJWOHoiPjwvcGF0aD48cG9seWxpbmUgcG9pbnRzPSIxNCAyIDE0IDggMjAgOCI+PC9wb2x5bGluZT48L3N2Zz4='">
             <h1>PDF</h1>
         </div>
         <nav class="nav-links">
@@ -887,7 +974,7 @@
 
     <main>
         <div id="tools-grid">
-            <div class="tool-card" onclick="openTool('merge')">
+            <div class="tool-card card-merge" onclick="openTool('merge')">
                 <div class="icon-wrapper bg-merge">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -898,7 +985,7 @@
                 <p>Mescle vários arquivos PDF em um único documento rapidamente. É tudo muito fácil e rápido.</p>
             </div>
 
-            <div class="tool-card" onclick="openTool('split')">
+            <div class="tool-card card-split" onclick="openTool('split')">
                 <div class="icon-wrapper bg-split">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -913,7 +1000,7 @@
                 <p>Extraia páginas do seu PDF ou divida um arquivo grande em várias partes independentes.</p>
             </div>
 
-            <div class="tool-card" onclick="openTool('free-merge')">
+            <div class="tool-card card-free" onclick="openTool('free-merge')">
                 <div class="icon-wrapper bg-free">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -959,7 +1046,20 @@
     <div class="floating-action-bar" id="action-bar">
         <span class="status-text" id="status-text">Arquivos prontos</span>
 
-        <select id="free-merge-mode" class="select-modern" style="display: none;">
+        <div class="custom-select-container" id="cs-container" style="display: none;">
+            <div class="custom-select-trigger" id="cs-trigger">
+                <span id="cs-label">Baixar Tudo</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+            <div class="custom-select-dropdown" id="cs-dropdown">
+                <div class="cs-option active" data-value="all">Baixar Tudo</div>
+                <div class="cs-option" data-value="pairs">Em Duplas na Sequência</div>
+            </div>
+        </div>
+
+        <select id="free-merge-mode" style="display: none;">
             <option value="all">Baixar Tudo</option>
             <option value="pairs">Em Duplas na Sequência</option>
         </select>
@@ -979,40 +1079,19 @@
     </div>
 
     <div id="loading-overlay">
-        <div class="upload-animation-container">
-            <div class="anim-source">
-                <svg class="folder-back" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#FDE047" d="M8 18h16l6 8h26v28H8Z" />
-                </svg>
-
-                <div class="anim-file" id="anim-file-el">
-                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                        <path fill="#FFFFFF" d="M14 8h24l12 12v36H14Z" />
-                        <path fill="#e2e8f0" d="M38 8v12h12" />
-                        <rect x="24" y="28" width="16" height="2" rx="1" fill="#cbd5e1" />
-                        <rect x="24" y="34" width="16" height="2" rx="1" fill="#cbd5e1" />
-                        <rect x="24" y="40" width="10" height="2" rx="1" fill="#cbd5e1" />
-                        <rect x="18" y="24" width="14" height="14" rx="3" fill="#EF4444" />
-                        <text x="20" y="34" font-family="Arial, sans-serif" font-size="7" font-weight="bold"
-                            fill="#FFFFFF">PDF</text>
-                    </svg>
-                </div>
-
-                <svg class="folder-front" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#FACC15" d="M8 26h48v28H8Z" />
-                </svg>
-            </div>
-
-            <div class="anim-dest">
-                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#7DD3FC"
-                        d="M48 44c6.6 0 12-5.4 12-12s-5.4-12-12-12c-1.1 0-2.2.1-3.2.4C44 14.1 38 10 31 10c-8.8 0-16 7.2-16 16 0 .6 0 1.2.1 1.8-5.3 1.1-9.1 5.7-9.1 11.2 0 6.6 5.4 12 12 12h30z" />
-                    <path fill="#0EA5E9"
-                        d="M48 44H18c-5.5 0-10-4.5-10-10s4.5-10 10-10c.8 0 1.5.1 2.2.3C21.7 18.2 25.9 14 31 14c5.7 0 10.5 4.3 11.7 9.8 1.6-.5 3.4-.8 5.3-.8 6.6 0 12 5.4 12 12s-5.4 12-12 12z" />
-                </svg>
+        <div id="anim-upload" class="anim-upload-container">
+            <div class="scanner-doc">
+                <div class="scanner-line" id="anim-sync-upload"></div>
             </div>
         </div>
-        <h3 id="loading-text" style="margin-top: 25px; color: #1e293b; font-weight: 600;">Processando...</h3>
+
+        <div id="anim-process" class="anim-process-container">
+            <div class="process-dot"></div>
+            <div class="process-dot"></div>
+            <div class="process-dot" id="anim-sync-process"></div>
+        </div>
+
+        <h3 id="loading-text" style="margin-top: 10px; color: #1e293b; font-weight: 600;">Processando...</h3>
     </div>
 
     <div id="toast-container"></div>
@@ -1034,45 +1113,69 @@
         const actionBar = document.getElementById('action-bar');
         const statusText = document.getElementById('status-text');
 
-        // Elementos do Overlay de Loading
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 
-        const freeMergeSelect = document.getElementById('free-merge-mode');
         const exportModal = document.getElementById('export-modal');
         const modalBody = document.getElementById('modal-body');
 
         const dzTitle = document.getElementById('dz-title');
         const dzSubtitle = document.getElementById('dz-subtitle');
 
-        // --- SISTEMA ROBUSTO DE LOADING E ANIMAÇÃO ---
+        // --- SISTEMA DE SELETOR CUSTOMIZADO ---
+        const csContainer = document.getElementById('cs-container');
+        const csTrigger = document.getElementById('cs-trigger');
+        const csLabel = document.getElementById('cs-label');
+        const csOptions = document.querySelectorAll('.cs-option');
+        const nativeSelect = document.getElementById('free-merge-mode');
+
+        csTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            csContainer.classList.toggle('open');
+        });
+
+        csOptions.forEach(option => {
+            option.addEventListener('click', function (e) {
+                e.stopPropagation();
+                nativeSelect.value = this.dataset.value;
+                csLabel.textContent = this.textContent;
+                csOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                csContainer.classList.remove('open');
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!csContainer.contains(e.target)) {
+                csContainer.classList.remove('open');
+            }
+        });
+
+        // --- SISTEMA ROBUSTO DE LOADING ---
         let isLoadingActive = false;
         let hideLoadingRequested = false;
         let loadingResolve = null;
 
-        function showLoading(text) {
+        function showLoading(text, type = 'process') {
             isLoadingActive = true;
             hideLoadingRequested = false;
             loadingText.innerText = text;
+
+            document.getElementById('anim-upload').style.display = type === 'upload' ? 'flex' : 'none';
+            document.getElementById('anim-process').style.display = type === 'process' ? 'flex' : 'none';
+
             loadingOverlay.style.display = 'flex';
-            document.body.classList.add('no-scroll'); // Remove a barra de rolagem
+            document.body.classList.add('no-scroll');
         }
 
-        // Retorna uma Promise que só resolve quando a animação finalizar o ciclo
         function hideLoading() {
             return new Promise((resolve) => {
-                if (!isLoadingActive) {
-                    resolve();
-                    return;
-                }
+                if (!isLoadingActive) { resolve(); return; }
                 hideLoadingRequested = true;
                 loadingResolve = resolve;
 
-                // Failsafe: se a animação travar, ele finaliza por segurança após 2.5s
                 setTimeout(() => {
-                    if (isLoadingActive && hideLoadingRequested) {
-                        finishHideLoading();
-                    }
+                    if (isLoadingActive && hideLoadingRequested) finishHideLoading();
                 }, 2500);
             });
         }
@@ -1081,22 +1184,13 @@
             isLoadingActive = false;
             hideLoadingRequested = false;
             loadingOverlay.style.display = 'none';
-            document.body.classList.remove('no-scroll'); // Devolve a barra de rolagem
-            if (loadingResolve) {
-                loadingResolve();
-                loadingResolve = null;
-            }
+            document.body.classList.remove('no-scroll');
+            if (loadingResolve) { loadingResolve(); loadingResolve = null; }
         }
 
-        // Ouve o momento exato em que o ciclo da animação termina para fechá-la perfeitamente
-        document.getElementById('anim-file-el').addEventListener('animationiteration', () => {
-            if (hideLoadingRequested) {
-                finishHideLoading();
-            }
-        });
-        // ---------------------------------------------
+        document.getElementById('anim-sync-upload').addEventListener('animationiteration', () => { if (hideLoadingRequested) finishHideLoading(); });
+        document.getElementById('anim-sync-process').addEventListener('animationiteration', () => { if (hideLoadingRequested) finishHideLoading(); });
 
-        // Função utilitária para formatar bytes
         function formatBytes(bytes, decimals = 2) {
             if (!+bytes) return '0 Bytes';
             const k = 1024;
@@ -1128,14 +1222,10 @@
             }
         }
 
-        function goHome() {
-            closeTool();
-        }
+        function goHome() { closeTool(); }
 
         function openTool(tool) {
-            if (currentTool !== tool) {
-                selectedFiles = [];
-            }
+            if (currentTool !== tool) selectedFiles = [];
 
             currentTool = tool;
             updateNavActive(tool);
@@ -1144,31 +1234,34 @@
                 dzTitle.innerText = "Juntar arquivos PDF";
                 dzSubtitle.innerText = "Mesclar e juntar PDFs e colocá-los em qualquer ordem que desejar. É tudo muito fácil e rápido!";
                 fileInput.multiple = true;
-                freeMergeSelect.style.display = 'none';
+                document.getElementById('cs-container').style.display = 'none';
             } else if (tool === 'split') {
                 dzTitle.innerText = "Dividir arquivo PDF";
                 dzSubtitle.innerText = "Extraia páginas do seu PDF. O sistema carregará todas as páginas para você escolher o que baixar.";
                 fileInput.multiple = false;
-                freeMergeSelect.style.display = 'none';
+                document.getElementById('cs-container').style.display = 'none';
             } else if (tool === 'free-merge') {
                 dzTitle.innerText = "Juntar PDF Livre";
                 dzSubtitle.innerText = "Organize e baixe seus PDFs do seu jeito: tudo junto ou em duplas sequenciais.";
                 fileInput.multiple = true;
-                freeMergeSelect.style.display = 'block';
+                document.getElementById('cs-container').style.display = 'block';
             }
 
             updateUI();
             toolsGrid.style.display = 'none';
-            workspace.style.display = 'block';
+            workspace.style.display = 'flex'; // Modificado para permitir o alinhamento flexível da nova tela inteira
 
             if (!sortableInstance) {
                 sortableInstance = new Sortable(thumbnailGrid, {
                     animation: 250,
                     ghostClass: 'borda-formiguinha',
                     filter: '.add-more-btn',
-                    onMove: function (evt) {
-                        return evt.related.className.indexOf('add-more-btn') === -1;
-                    },
+                    scroll: true,             // Ativa scroll no arrasto
+                    scrollSensitivity: 100,   // Distância da margem para ativar o scroll
+                    scrollSpeed: 25,          // Velocidade do scroll suave
+                    forceFallback: true,      // Obriga o fallback (resolve o problema de travamento no scroll do grid)
+                    fallbackOnBody: true,     // Anexa a imagem arrastada ao body permitindo mover livremente
+                    onMove: function (evt) { return evt.related.className.indexOf('add-more-btn') === -1; },
                     onEnd: function (evt) {
                         const item = selectedFiles.splice(evt.oldIndex, 1)[0];
                         selectedFiles.splice(evt.newIndex, 0, item);
@@ -1193,14 +1286,11 @@
         document.addEventListener('dragleave', (e) => {
             if (currentTool && e.target === document.documentElement) dropZone.classList.remove('dragover');
         });
-
         document.addEventListener('drop', (e) => {
             if (currentTool) {
                 e.preventDefault();
                 dropZone.classList.remove('dragover');
-                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    handleFiles(e.dataTransfer.files);
-                }
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
             }
         });
 
@@ -1214,11 +1304,11 @@
                 if (selectedFiles.length > 0 || newFiles.length > 1) {
                     showToast('A divisão processa apenas um arquivo base por vez.', 'info');
                 }
-                showLoading("Extraindo e renderizando todas as páginas...");
+                showLoading("Extraindo e renderizando todas as páginas...", 'upload');
                 await processSplitFile(newFiles[0]);
                 await hideLoading();
             } else {
-                showLoading("Importando documentos...");
+                showLoading("Importando documentos...", 'upload');
                 for (let file of newFiles) {
                     await addFileObj(file, false);
                 }
@@ -1328,15 +1418,12 @@
 
                     const sizeStr = formatBytes(obj.size);
                     const displayName = obj.isSplitPage ? `Página ${obj.pageNum}` : obj.file.name;
-                    const tooltipText = obj.isSplitPage
-                        ? `Arquivo: ${obj.file.name}\n${displayName}\nTamanho aprox.: ${sizeStr}`
-                        : `${obj.file.name}\nTamanho: ${sizeStr}`;
 
                     card.innerHTML = `
                         <div class="thumb-image-container">
                             <img src="${obj.thumbnail}" id="img-${obj.id}" class="thumb-image" style="transform: rotate(${obj.rotation}deg)">
                         </div>
-                        <div class="thumb-filename" data-tooltip="${tooltipText}">${displayName}</div>
+                        <div class="thumb-filename" title="${displayName}">${displayName}</div>
                         <div class="thumb-actions">
                             <button class="action-btn" onclick="rotateFile('${obj.id}')" title="Girar 90º">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
@@ -1390,7 +1477,7 @@
         }
 
         function openExportModal() {
-            const mode = freeMergeSelect.value;
+            const mode = document.getElementById('free-merge-mode').value;
             modalBody.innerHTML = '';
 
             if (mode === 'all') {
@@ -1434,10 +1521,10 @@
 
         async function confirmExport() {
             closeExportModal();
-            showLoading("Trabalhando na sua exportação livre...");
+            showLoading("Trabalhando na sua exportação livre...", 'process');
 
             try {
-                const mode = freeMergeSelect.value;
+                const mode = document.getElementById('free-merge-mode').value;
                 if (mode === 'all') {
                     const finalName = document.getElementById('export-name-0').value || 'Documento';
                     await executeAdvancedMerge(selectedFiles, finalName + '.pdf');
@@ -1453,7 +1540,7 @@
         }
 
         async function processFiles() {
-            showLoading("Criando seu novo documento...");
+            showLoading("Criando seu novo documento...", 'process');
             try {
                 if (currentTool === 'merge') await executeMerge();
                 else if (currentTool === 'split') await executeSplit();
@@ -1464,8 +1551,6 @@
                 await hideLoading();
             }
         }
-
-        // --- Funções Nativas PDF-LIB ---
 
         async function mergePDFObjects(filesArray) {
             const { PDFDocument, degrees } = window.PDFLib;
